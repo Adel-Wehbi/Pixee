@@ -1,10 +1,14 @@
 #include <wx/wx.h>
 #include <stb/stb_image.h>
 #include "Canvas.h"
+#include "Image.h"
+
+unsigned char * data;
 
 class MyApp: public wxApp
 {
     bool OnInit() override;
+    int OnExit() override;
     wxFrame* frame;
     Canvas* canvas;
 };
@@ -25,13 +29,23 @@ bool MyApp::OnInit() {
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
     frame = new MyFrame(wxT("Hello wxDC"), wxDefaultPosition, wxSize(800, 600));
 
-    canvas = new Canvas(frame);
+
+
+    int w, h, n;
+    data = stbi_load("../test-images/test.png", &w, &h, &n, 4);
+    Image image(w, h, n, data);
+
+    canvas = new Canvas(frame, image);
     sizer->Add(canvas, 1, wxEXPAND);
 
     frame->SetSizer(sizer);
     frame->SetAutoLayout(true);
-
+    canvas->setImage(image);
     frame->Show();
 
     return true;
+}
+
+int MyApp::OnExit() {
+    stbi_image_free(data);
 }

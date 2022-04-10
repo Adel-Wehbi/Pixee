@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(wxWidgets REQUIRED)
 include(${wxWidgets_USE_FILE})
 
-add_executable(SpriteEditor main.cpp Canvas.cpp)
+add_executable(SpriteEditor main.cpp Canvas.cpp Image.cpp Image.h)
 
 target_link_libraries(SpriteEditor ${wxWidgets_LIBRARIES})
 
