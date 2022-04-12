@@ -8,10 +8,15 @@
 class Canvas : public wxPanel {
 private:
     Image image;
+    wxPoint origin;
+    wxSize pixelSize;
 public:
     explicit Canvas(wxFrame* parent, Image image);
 
     void setImage(Image image);
+
+    void mouseMoveHandler(wxMouseEvent& event);
+    void middleMouseHandler(wxMouseEvent& event);
 
     void paintEvent(wxPaintEvent& event);
     void paintNow();
