@@ -27,7 +27,7 @@ wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit() {
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
-    frame = new MyFrame(wxT("Hello wxDC"), wxDefaultPosition, wxSize(800, 600));
+    frame = new MyFrame("Hello wxDC", wxDefaultPosition, wxSize(800, 600));
 
 
 
