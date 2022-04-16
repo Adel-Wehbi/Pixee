@@ -3,12 +3,12 @@ project(SpriteEditor)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(wxWidgets REQUIRED)
-include(${wxWidgets_USE_FILE})
+set(EXTERNAL_LIBS_DIR external/)
 
-add_executable(SpriteEditor main.cpp Canvas.cpp Image.cpp Image.h)
+add_subdirectory(${EXTERNAL_LIBS_DIR}/wxWidgets)
 
-target_link_libraries(SpriteEditor ${wxWidgets_LIBRARIES})
+add_executable(SpriteEditor main.cpp Canvas.cpp Image.cpp)
+target_link_libraries(SpriteEditor wx::core wx::base)
 
 # to activate stb_image
 target_compile_definitions(SpriteEditor PRIVATE STB_IMAGE_IMPLEMENTATION)
