@@ -1,7 +1,7 @@
 #include "Canvas.h"
 #include <iostream>
 
-Canvas::Canvas(wxFrame *parent, Image image) :
+Canvas::Canvas(wxFrame *parent, wxImage *image) :
         wxPanel(parent), image(image), origin(100, 100), pixelSize(20, 20) {
 
     Bind(wxEVT_PAINT, &Canvas::paintEvent, this);
@@ -22,9 +22,9 @@ void Canvas::paintNow() {
 
 void Canvas::render(wxDC &dc) {
     dc.SetPen(wxNullPen);
-    for(int x = 0; x < image.getWidth(); x++) {
-        for(int y = 0; y < image.getHeight(); y++){
-            dc.SetBrush(wxBrush(image.getPixelAt(x, y)));
+    for(int x = 0; x < image->GetWidth(); x++) {
+        for(int y = 0; y < image->GetHeight(); y++){
+            dc.SetBrush(wxBrush(wxColour(image->GetRed(x,y), image->GetGreen(x,y), image->GetBlue(x,y), image->GetAlpha(x,y))));
             dc.DrawRectangle(
                     wxPoint(
                     origin.x + x * pixelSize.GetWidth(), origin.y + y * pixelSize.GetHeight()
@@ -45,7 +45,7 @@ void Canvas::render(wxDC &dc) {
     }
 }
 
-void Canvas::setImage(Image image) {
+void Canvas::setImage(wxImage* image) {
     this->image = image;
 }
 

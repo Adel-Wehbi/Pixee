@@ -2,18 +2,17 @@
 #define SPRITEEDITOR_CANVAS_H
 
 #include <wx/wx.h>
-#include "Image.h"
 
 
 class Canvas : public wxPanel {
 private:
-    Image image;
+    wxImage* image;
     wxPoint origin;
     wxSize pixelSize;
 public:
-    explicit Canvas(wxFrame* parent, Image image);
+    explicit Canvas(wxFrame* parent, wxImage*image);
 
-    void setImage(Image image);
+    void setImage(wxImage *image);
 
     void mouseMoveHandler(wxMouseEvent& event);
     void middleMouseHandler(wxMouseEvent& event);

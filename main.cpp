@@ -1,9 +1,7 @@
 #include <wx/wx.h>
-#include <stb/stb_image.h>
 #include "Canvas.h"
-#include "Image.h"
 
-unsigned char * data;
+wxImage* image;
 
 class MyApp: public wxApp
 {
@@ -30,10 +28,8 @@ bool MyApp::OnInit() {
     frame = new MyFrame("Hello wxDC", wxDefaultPosition, wxSize(800, 600));
 
 
-
-    int w, h, n;
-    data = stbi_load("../test-images/test.png", &w, &h, &n, 4);
-    Image image(w, h, n, data);
+    wxInitAllImageHandlers();
+    image = new wxImage("../test-images/test.png");
 
     canvas = new Canvas(frame, image);
     sizer->Add(canvas, 1, wxEXPAND);
@@ -47,5 +43,5 @@ bool MyApp::OnInit() {
 }
 
 int MyApp::OnExit() {
-    stbi_image_free(data);
+    delete image;
 }
