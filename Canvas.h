@@ -7,6 +7,7 @@
 class Canvas : public wxPanel {
 private:
     wxImage* image;
+    wxBitmap bitmap;
     wxPoint origin;
     wxSize pixelSize;
 public:
@@ -16,9 +17,9 @@ public:
 
     void mouseMoveHandler(wxMouseEvent& event);
     void middleMouseHandler(wxMouseEvent& event);
+    void resizeEvent(wxSizeEvent& event);
 
     void paintEvent(wxPaintEvent& event);
-    void paintNow();
     void render(wxDC& dc);
 
 };

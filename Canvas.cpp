@@ -1,22 +1,22 @@
 #include "Canvas.h"
 #include <iostream>
+#include <wx/dcbuffer.h>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
         wxPanel(parent), image(image), origin(100, 100), pixelSize(20, 20) {
 
+    wxWindow::SetBackgroundStyle(wxBG_STYLE_PAINT);
+    wxWindow::SetDoubleBuffered(true);
+
     Bind(wxEVT_PAINT, &Canvas::paintEvent, this);
     Bind(wxEVT_MOTION, &Canvas::mouseMoveHandler, this);
     Bind(wxEVT_MOUSEWHEEL, &Canvas::middleMouseHandler, this);
+    Bind(wxEVT_SIZE, &Canvas::resizeEvent, this);
 }
 
 void Canvas::paintEvent(wxPaintEvent &event) {
-    wxPaintDC dc(this);
-    render(dc);
-}
-
-void Canvas::paintNow() {
-    wxClientDC dc(this);
-    Refresh();
+    wxBufferedPaintDC dc(this, bitmap);
+    dc.Clear();
     render(dc);
 }
 
@@ -52,7 +52,7 @@ void Canvas::setImage(wxImage* image) {
 void Canvas::mouseMoveHandler(wxMouseEvent& event) {
     if(event.RightIsDown()) {
         origin = event.GetPosition();
-        paintNow();
+        Refresh();
     }
 }
 
@@ -63,5 +63,9 @@ void Canvas::middleMouseHandler(wxMouseEvent &event) {
     }
     pixelSize.x += delta;
     pixelSize.y += delta;
-    paintNow();
+    Refresh();
+}
+
+void Canvas::resizeEvent(wxSizeEvent& event) {
+    bitmap = wxBitmap(event.GetSize().GetWidth(), event.GetSize().GetHeight());
 }
