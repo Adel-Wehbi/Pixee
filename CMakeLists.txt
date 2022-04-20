@@ -7,5 +7,7 @@ set(EXTERNAL_LIBS_DIR external/)
 
 add_subdirectory(${EXTERNAL_LIBS_DIR}/wxWidgets)
 
-add_executable(SpriteEditor main.cpp Canvas.cpp)
+FILE(GLOB_RECURSE SOURCE_FILES src/**)
+
+add_executable(SpriteEditor ${SOURCE_FILES})
 target_link_libraries(SpriteEditor wx::core wx::base)

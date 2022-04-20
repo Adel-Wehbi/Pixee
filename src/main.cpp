@@ -19,7 +19,9 @@ public:
 };
 
 MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
-    : wxFrame(nullptr, -1, title, pos, size){}
+        : wxFrame(nullptr, -1, title, pos, size){
+
+}
 
 wxIMPLEMENT_APP(MyApp);
 
