@@ -14,8 +14,8 @@ public:
     explicit Canvas(wxFrame* parent, wxImage*image);
 
     void setImage(wxImage *image);
+    void translateOrigin(int deltaX, int deltaY);
 
-    void mouseMoveHandler(wxMouseEvent& event);
     void middleMouseHandler(wxMouseEvent& event);
     void resizeEvent(wxSizeEvent& event);
 

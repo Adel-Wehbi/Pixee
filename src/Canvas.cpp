@@ -9,7 +9,6 @@ Canvas::Canvas(wxFrame *parent, wxImage *image) :
     wxWindow::SetDoubleBuffered(true);
 
     Bind(wxEVT_PAINT, &Canvas::paintEvent, this);
-    Bind(wxEVT_MOTION, &Canvas::mouseMoveHandler, this);
     Bind(wxEVT_MOUSEWHEEL, &Canvas::middleMouseHandler, this);
     Bind(wxEVT_SIZE, &Canvas::resizeEvent, this);
 }
@@ -49,11 +48,10 @@ void Canvas::setImage(wxImage* image) {
     this->image = image;
 }
 
-void Canvas::mouseMoveHandler(wxMouseEvent& event) {
-    if(event.RightIsDown()) {
-        origin = event.GetPosition();
-        Refresh();
-    }
+void Canvas::translateOrigin(int deltaX, int deltaY) {
+    origin.x += deltaX;
+    origin.y += deltaY;
+    Refresh();
 }
 
 void Canvas::middleMouseHandler(wxMouseEvent &event) {
