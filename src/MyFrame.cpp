@@ -5,7 +5,10 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
 
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
 
-    image = new wxImage("../test-images/test.png");
+    wxFileDialog fileDialog(this, "OPEN FILE", "", "", "PNG files (*.png)|*.png", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    fileDialog.ShowModal();
+
+    image = new wxImage(fileDialog.GetPath());
     canvas = new Canvas(this, image);
     dragController = new DragController(canvas);
 

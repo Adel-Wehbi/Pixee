@@ -18,4 +18,5 @@ bool MyApp::OnInit() {
 }
 
 int MyApp::OnExit() {
+    return 0;
 }

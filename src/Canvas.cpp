@@ -20,10 +20,16 @@ void Canvas::paintEvent(wxPaintEvent &event) {
 }
 
 void Canvas::render(wxDC &dc) {
+    wxImage subImage(image->GetSubImage(wxRect(
+        0, 0,
+        ceil(abs(origin.x - dc.GetSize().GetWidth()) / pixelSize.GetWidth()),
+        ceil(abs(origin.y - dc.GetSize().GetHeight()) / pixelSize.GetHeight())
+    )));
     dc.SetPen(wxNullPen);
-    for(int x = 0; x < image->GetWidth(); x++) {
-        for(int y = 0; y < image->GetHeight(); y++){
-            dc.SetBrush(wxBrush(wxColour(image->GetRed(x,y), image->GetGreen(x,y), image->GetBlue(x,y), image->GetAlpha(x,y))));
+    for(int x = 0; x < subImage.GetWidth(); x++) {
+        for(int y = 0; y < subImage.GetHeight(); y++){
+            unsigned int alpha = image->HasAlpha() ? (unsigned int) image->GetAlpha(x,y) : 255;
+            dc.SetBrush(wxBrush(wxColour(image->GetRed(x, y), image->GetGreen(x, y), image->GetBlue(x, y), alpha)));
             dc.DrawRectangle(
                     wxPoint(
                     origin.x + x * pixelSize.GetWidth(), origin.y + y * pixelSize.GetHeight()
@@ -40,7 +46,7 @@ void Canvas::render(wxDC &dc) {
         dc.DrawLine(wxPoint(x, 0), wxPoint(x, dc.GetSize().GetHeight()));
     }
     for(int y = startingY; y < dc.GetSize().GetHeight(); y += pixelSize.GetHeight()) {
-        dc.DrawLine(wxPoint(0, y), wxPoint(dc.GetSize().GetHeight(), y));
+        dc.DrawLine(wxPoint(0, y), wxPoint(dc.GetSize().GetWidth(), y));
     }
 }
 
