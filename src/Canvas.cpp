@@ -1,5 +1,5 @@
 #include "Canvas.h"
-#include "wx/graphics.h"
+#include <wx/graphics.h>
 #include <iostream>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
@@ -14,6 +14,8 @@ Canvas::Canvas(wxFrame *parent, wxImage *image) :
     Bind(wxEVT_PAINT, &Canvas::paintEvent, this);
     Bind(wxEVT_MOUSEWHEEL, &Canvas::middleMouseHandler, this);
     Bind(wxEVT_SIZE, &Canvas::resizeEvent, this);
+    Bind(wxEVT_MOTION, &Canvas::leftDownHandler, this);
+    Bind(wxEVT_LEFT_DOWN, &Canvas::leftDownHandler, this);
 }
 
 void Canvas::paintEvent(wxPaintEvent &event) {
@@ -23,7 +25,6 @@ void Canvas::paintEvent(wxPaintEvent &event) {
 }
 
 void Canvas::render(wxBufferedPaintDC &dc) {
-
     dc.SetTransformMatrix(imageCoordMatrix);
     wxBitmap imageBitmap(*image);
     dc.SetPen(wxNullPen);
@@ -81,4 +82,18 @@ void Canvas::middleMouseHandler(wxMouseEvent &event) {
 
 void Canvas::resizeEvent(wxSizeEvent& event) {
     bufferBitmap = wxBitmap(event.GetSize().GetWidth(), event.GetSize().GetHeight());
+}
+
+void Canvas::leftDownHandler(wxMouseEvent &event) {
+    if(!event.LeftIsDown())
+        return;
+    wxAffineMatrix2D matrix(imageCoordMatrix);
+    matrix.Invert();
+    wxPoint2DDouble positionOnPicture(matrix.TransformPoint(event.GetPosition()));
+    if(positionOnPicture.m_x < 0 || positionOnPicture.m_x >= image->GetWidth() || positionOnPicture.m_y < 0 || positionOnPicture.m_y >= image->GetHeight())
+        return;
+    image->SetRGB(positionOnPicture.m_x, positionOnPicture.m_y, 0, 255, 0);
+    if(image->HasAlpha())
+        image->SetAlpha(positionOnPicture.m_x, positionOnPicture.m_y, 255);
+    Refresh();
 }

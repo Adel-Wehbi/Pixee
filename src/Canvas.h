@@ -20,6 +20,7 @@ public:
 
     void middleMouseHandler(wxMouseEvent& event);
     void resizeEvent(wxSizeEvent& event);
+    void leftDownHandler(wxMouseEvent& event);
 
     void paintEvent(wxPaintEvent& event);
     void render(wxBufferedPaintDC& dc);
