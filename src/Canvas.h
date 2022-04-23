@@ -2,14 +2,16 @@
 #define SPRITEEDITOR_CANVAS_H
 
 #include <wx/wx.h>
+#include <wx/dcbuffer.h>
 
 
 class Canvas : public wxPanel {
 private:
     wxImage* image;
-    wxBitmap bitmap;
+    wxBitmap bufferBitmap;
     wxPoint origin;
     wxSize pixelSize;
+    wxAffineMatrix2D imageCoordMatrix;
 public:
     explicit Canvas(wxFrame* parent, wxImage*image);
 
@@ -20,7 +22,7 @@ public:
     void resizeEvent(wxSizeEvent& event);
 
     void paintEvent(wxPaintEvent& event);
-    void render(wxDC& dc);
+    void render(wxBufferedPaintDC& dc);
 
 };
 

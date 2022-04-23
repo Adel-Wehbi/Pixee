@@ -1,9 +1,12 @@
 #include "Canvas.h"
+#include "wx/graphics.h"
 #include <iostream>
-#include <wx/dcbuffer.h>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
-        wxPanel(parent), image(image), origin(0, 0), pixelSize(20, 20) {
+        wxPanel(parent), image(image), origin(100, 100), pixelSize(20, 20) {
+
+    imageCoordMatrix.Translate(origin.x, origin.y);
+    imageCoordMatrix.Scale(pixelSize.x, pixelSize.y);
 
     wxWindow::SetBackgroundStyle(wxBG_STYLE_PAINT);
     wxWindow::SetDoubleBuffered(true);
@@ -14,23 +17,19 @@ Canvas::Canvas(wxFrame *parent, wxImage *image) :
 }
 
 void Canvas::paintEvent(wxPaintEvent &event) {
-    wxBufferedPaintDC dc(this, bitmap);
+    wxBufferedPaintDC dc(this, bufferBitmap);
     dc.Clear();
     render(dc);
 }
 
-void Canvas::render(wxDC &dc) {
+void Canvas::render(wxBufferedPaintDC &dc) {
+
+    dc.SetTransformMatrix(imageCoordMatrix);
     wxBitmap imageBitmap(*image);
-    double scaleX, scaleY;
-    dc.GetLogicalScale(&scaleX, &scaleY);
-    dc.SetLogicalScale(pixelSize.x, pixelSize.y);
-    dc.SetDeviceOrigin(origin.x, origin.y);
     dc.SetPen(wxNullPen);
     dc.DrawBitmap(imageBitmap, wxPoint());
-    dc.SetLogicalScale(scaleX, scaleY);
+    dc.ResetTransformMatrix();
     // drawing gridlines
-
-    dc.SetDeviceOrigin(0, 0);
     dc.SetPen(wxPen(*wxBLACK, 1));
     int startingX = origin.x - ceil(origin.x / pixelSize.GetWidth()) * pixelSize.GetWidth();
     int startingY = origin.y - ceil(origin.y / pixelSize.GetHeight()) * pixelSize.GetHeight();
@@ -49,6 +48,9 @@ void Canvas::setImage(wxImage* image) {
 void Canvas::translateOrigin(int deltaX, int deltaY) {
     origin.x += deltaX;
     origin.y += deltaY;
+    imageCoordMatrix = wxAffineMatrix2D();
+    imageCoordMatrix.Translate(origin.x, origin.y);
+    imageCoordMatrix.Scale(pixelSize.x, pixelSize.y);
     Refresh();
 }
 
@@ -57,11 +59,26 @@ void Canvas::middleMouseHandler(wxMouseEvent &event) {
     if(delta < 0 && abs(delta) > pixelSize.x) {
        return;
     }
+
+    wxPoint devicePos(event.GetPosition());
+    wxAffineMatrix2D transformMatrix(imageCoordMatrix);
+    transformMatrix.Invert();
+    wxPoint2DDouble positionOnImage(transformMatrix.TransformPoint(wxPoint2DDouble(devicePos.x, devicePos.y)));
+
     pixelSize.x += delta;
     pixelSize.y += delta;
+
+    // now we get the real position of the same 'positionOnImage' after scaling
+    transformMatrix = wxAffineMatrix2D();
+    transformMatrix.Translate(origin.x, origin.y);
+    transformMatrix.Scale(pixelSize.x, pixelSize.y);
+    wxPoint2DDouble realPos(transformMatrix.TransformPoint(wxPoint2DDouble(positionOnImage.m_x, positionOnImage.m_y)));
+
+    translateOrigin(-(realPos - devicePos).m_x, -(realPos - devicePos).m_y);
+
     Refresh();
 }
 
 void Canvas::resizeEvent(wxSizeEvent& event) {
-    bitmap = wxBitmap(event.GetSize().GetWidth(), event.GetSize().GetHeight());
+    bufferBitmap = wxBitmap(event.GetSize().GetWidth(), event.GetSize().GetHeight());
 }
