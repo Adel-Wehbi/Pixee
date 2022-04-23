@@ -3,7 +3,7 @@
 #include <wx/dcbuffer.h>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
-        wxPanel(parent), image(image), origin(100, 100), pixelSize(20, 20) {
+        wxPanel(parent), image(image), origin(0, 0), pixelSize(20, 20) {
 
     wxWindow::SetBackgroundStyle(wxBG_STYLE_PAINT);
     wxWindow::SetDoubleBuffered(true);
@@ -20,25 +20,17 @@ void Canvas::paintEvent(wxPaintEvent &event) {
 }
 
 void Canvas::render(wxDC &dc) {
-    wxImage subImage(image->GetSubImage(wxRect(
-        0, 0,
-        ceil(abs(origin.x - dc.GetSize().GetWidth()) / pixelSize.GetWidth()),
-        ceil(abs(origin.y - dc.GetSize().GetHeight()) / pixelSize.GetHeight())
-    )));
+    wxBitmap imageBitmap(*image);
+    double scaleX, scaleY;
+    dc.GetLogicalScale(&scaleX, &scaleY);
+    dc.SetLogicalScale(pixelSize.x, pixelSize.y);
+    dc.SetDeviceOrigin(origin.x, origin.y);
     dc.SetPen(wxNullPen);
-    for(int x = 0; x < subImage.GetWidth(); x++) {
-        for(int y = 0; y < subImage.GetHeight(); y++){
-            unsigned int alpha = image->HasAlpha() ? (unsigned int) image->GetAlpha(x,y) : 255;
-            dc.SetBrush(wxBrush(wxColour(image->GetRed(x, y), image->GetGreen(x, y), image->GetBlue(x, y), alpha)));
-            dc.DrawRectangle(
-                    wxPoint(
-                    origin.x + x * pixelSize.GetWidth(), origin.y + y * pixelSize.GetHeight()
-                    ),
-                 pixelSize
-                 );
-        }
-    }
+    dc.DrawBitmap(imageBitmap, wxPoint());
+    dc.SetLogicalScale(scaleX, scaleY);
     // drawing gridlines
+
+    dc.SetDeviceOrigin(0, 0);
     dc.SetPen(wxPen(*wxBLACK, 1));
     int startingX = origin.x - ceil(origin.x / pixelSize.GetWidth()) * pixelSize.GetWidth();
     int startingY = origin.y - ceil(origin.y / pixelSize.GetHeight()) * pixelSize.GetHeight();
