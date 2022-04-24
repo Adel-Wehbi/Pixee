@@ -1,5 +1,5 @@
-#ifndef SPRITEEDITOR_MYFRAME_H
-#define SPRITEEDITOR_MYFRAME_H
+#ifndef PIXEE_MYFRAME_H
+#define PIXEE_MYFRAME_H
 
 
 #include "Canvas.h"
@@ -19,4 +19,4 @@ private:
 };
 
 
-#endif //SPRITEEDITOR_MYFRAME_H
+#endif // PIXEE_MYFRAME_H

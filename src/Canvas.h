@@ -1,5 +1,5 @@
-#ifndef SPRITEEDITOR_CANVAS_H
-#define SPRITEEDITOR_CANVAS_H
+#ifndef PIXEE_CANVAS_H
+#define PIXEE_CANVAS_H
 
 #include <wx/wx.h>
 #include <wx/dcbuffer.h>
@@ -27,4 +27,4 @@ public:
 
 };
 
-#endif //SPRITEEDITOR_CANVAS_H
+#endif // PIXEE_CANVAS_H
