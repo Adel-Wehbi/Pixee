@@ -1,5 +1,5 @@
 #include "Canvas.h"
-#include <wx/graphics.h>
+#include <wx/wfstream.h>
 #include <iostream>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
@@ -16,6 +16,14 @@ Canvas::Canvas(wxFrame *parent, wxImage *image) :
     Bind(wxEVT_SIZE, &Canvas::resizeEvent, this);
     Bind(wxEVT_MOTION, &Canvas::leftDownHandler, this);
     Bind(wxEVT_LEFT_DOWN, &Canvas::leftDownHandler, this);
+    Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& event) {
+        if(tolower(event.GetUnicodeKey()) != 's' || !event.ControlDown())
+            return;
+        wxFileDialog fileDialog(this->GetParent(), "Save Image", "", "", "PNG files (*.PNG) |*.png", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+        if(fileDialog.ShowModal() == wxID_CANCEL)
+            return;
+        this->image->SaveFile(fileDialog.GetPath());
+    });
 }
 
 void Canvas::paintEvent(wxPaintEvent &event) {
