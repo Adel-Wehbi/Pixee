@@ -6,7 +6,10 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
 
     wxFileDialog fileDialog(this, "OPEN FILE", "", "", "PNG files (*.png)|*.png", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    fileDialog.ShowModal();
+    if(fileDialog.ShowModal() == wxID_CANCEL) {
+        exit(0);
+    }
+
 
     image = new wxImage(fileDialog.GetPath());
     canvas = new Canvas(this, image);
