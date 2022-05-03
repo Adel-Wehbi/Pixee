@@ -9,7 +9,7 @@ class Canvas : public wxPanel {
 private:
     wxImage* image;
     wxBitmap bufferBitmap;
-    wxPoint origin;
+    wxPoint imagePosition;
     wxSize pixelSize;
     wxAffineMatrix2D imageCoordMatrix;
 public:
@@ -19,11 +19,9 @@ public:
     void translateOrigin(int deltaX, int deltaY);
 
     void middleMouseHandler(wxMouseEvent& event);
-    void resizeEvent(wxSizeEvent& event);
     void leftDownHandler(wxMouseEvent& event);
 
-    void paintEvent(wxPaintEvent& event);
-    void render(wxBufferedPaintDC& dc);
+    void render(wxDC& dc);
 
 };
 
