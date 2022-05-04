@@ -3,7 +3,7 @@
 #include <iostream>
 
 Canvas::Canvas(wxFrame *parent, wxImage *image) :
-        wxPanel(parent), image(image), imagePosition(100, 100), pixelSize(20, 20) {
+        wxPanel(parent), image(image), imagePosition(100, 100), pixelSize(20, 20), selectedColor(*wxBLACK){
 
     imageCoordMatrix.Translate(imagePosition.x, imagePosition.y);
     imageCoordMatrix.Scale(pixelSize.x, pixelSize.y);
@@ -23,12 +23,20 @@ Canvas::Canvas(wxFrame *parent, wxImage *image) :
     Bind(wxEVT_MOTION, &Canvas::leftDownHandler, this);
     Bind(wxEVT_LEFT_DOWN, &Canvas::leftDownHandler, this);
     Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& event) {
-        if(tolower(event.GetUnicodeKey()) != 's' || !event.ControlDown())
-            return;
-        wxFileDialog fileDialog(this->GetParent(), "Save Image", "", "", "PNG files (*.PNG) |*.png", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-        if(fileDialog.ShowModal() == wxID_CANCEL)
-            return;
-        this->image->SaveFile(fileDialog.GetPath());
+        if(tolower(event.GetUnicodeKey()) == 's' && event.ControlDown()) {
+            wxFileDialog fileDialog(this->GetParent(), "Save Image", "", "", "PNG files (*.PNG) |*.png", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+            if(fileDialog.ShowModal() == wxID_CANCEL)
+                return;
+            this->image->SaveFile(fileDialog.GetPath());
+        } else if(tolower(event.GetUnicodeKey()) == 'c') {
+            wxColourData data;
+            data.SetChooseAlpha(true);
+            data.SetColour(selectedColor);
+            wxColourDialog dialog(this, &data);
+            dialog.ShowModal();
+            data = dialog.GetColourData();
+            selectedColor = data.GetColour();
+        }
     });
 }
 
@@ -95,8 +103,9 @@ void Canvas::leftDownHandler(wxMouseEvent &event) {
     wxPoint2DDouble positionOnPicture(matrix.TransformPoint(event.GetPosition()));
     if(positionOnPicture.m_x < 0 || positionOnPicture.m_x >= image->GetWidth() || positionOnPicture.m_y < 0 || positionOnPicture.m_y >= image->GetHeight())
         return;
-    image->SetRGB(positionOnPicture.m_x, positionOnPicture.m_y, 0, 255, 0);
+
+    image->SetRGB(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetRed(), selectedColor.GetGreen(), selectedColor.GetBlue());
     if(image->HasAlpha())
-        image->SetAlpha(positionOnPicture.m_x, positionOnPicture.m_y, 255);
+        image->SetAlpha(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetAlpha());
     Refresh();
 }

@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <wx/dcbuffer.h>
+#include "wx/colourdata.h"
+#include "wx/colordlg.h"
 
 
 class Canvas : public wxPanel {
@@ -12,6 +14,7 @@ private:
     wxPoint imagePosition;
     wxSize pixelSize;
     wxAffineMatrix2D imageCoordMatrix;
+    wxColour selectedColor;
 public:
     explicit Canvas(wxFrame* parent, wxImage*image);
 
