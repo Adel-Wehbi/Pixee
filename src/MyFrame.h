@@ -4,16 +4,20 @@
 
 #include "Canvas.h"
 #include "DragController.h"
+#include "ActionPerformer.h"
+#include <memory>
 
 class MyFrame: public wxFrame
 {
+    ActionPerformer actionPerformer;
     Canvas* canvas;
     DragController* dragController;
-    wxImage* image;
+    std::unique_ptr<wxImage> image;
 
 public:
     MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
-
+    wxImage& getImage();
+    ActionPerformer& getActionPerformer();
 private:
     void rightMouseHandler(wxMouseEvent& event);
 };

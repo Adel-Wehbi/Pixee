@@ -6,6 +6,8 @@
 #include "wx/colourdata.h"
 #include "wx/colordlg.h"
 
+class MyFrame;
+class ActionPerformer;
 
 class Canvas : public wxPanel {
 private:
@@ -15,8 +17,9 @@ private:
     wxSize pixelSize;
     wxAffineMatrix2D imageCoordMatrix;
     wxColour selectedColor;
+    ActionPerformer* actionPerformer;
 public:
-    explicit Canvas(wxFrame* parent, wxImage*image);
+    explicit Canvas(MyFrame* parent, wxImage*image);
 
     void setImage(wxImage *image);
     void translateOrigin(int deltaX, int deltaY);

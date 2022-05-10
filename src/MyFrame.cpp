@@ -1,7 +1,7 @@
 #include "MyFrame.h"
 
 MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
-        : wxFrame(nullptr, -1, title, pos, size){
+        : wxFrame(nullptr, -1, title, pos, size), actionPerformer(this){
 
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -11,8 +11,8 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     }
 
 
-    image = new wxImage(fileDialog.GetPath());
-    canvas = new Canvas(this, image);
+    image = std::make_unique<wxImage>(fileDialog.GetPath());
+    canvas = new Canvas(this, image.get());
     dragController = new DragController(canvas);
 
     sizer->Add(canvas, 1, wxEXPAND);
@@ -21,6 +21,12 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
 
     canvas->Bind(wxEVT_RIGHT_DOWN, &MyFrame::rightMouseHandler, this);
     canvas->Bind(wxEVT_RIGHT_UP, &MyFrame::rightMouseHandler, this);
+    canvas->Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& event){
+        if(tolower(event.GetUnicodeKey()) == 'z' && event.ControlDown())  {
+            actionPerformer.undo();
+            this->canvas->Refresh();
+        }
+    });
 }
 
 void MyFrame::rightMouseHandler(wxMouseEvent &event) {
@@ -28,6 +34,14 @@ void MyFrame::rightMouseHandler(wxMouseEvent &event) {
         dragController->start();
     else
         dragController->stop();
+}
+
+wxImage& MyFrame::getImage() {
+    return *image;
+}
+
+ActionPerformer& MyFrame::getActionPerformer() {
+    return actionPerformer;
 }
 
 

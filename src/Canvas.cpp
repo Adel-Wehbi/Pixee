@@ -1,9 +1,12 @@
 #include "Canvas.h"
 #include <wx/wfstream.h>
 #include <iostream>
+#include "MyFrame.h"
+#include "actions/DrawAction.h"
 
-Canvas::Canvas(wxFrame *parent, wxImage *image) :
-        wxPanel(parent), image(image), imagePosition(100, 100), pixelSize(20, 20), selectedColor(*wxBLACK){
+Canvas::Canvas(MyFrame* parent, wxImage *image) :
+        wxPanel(parent), image(image), imagePosition(100, 100),
+        pixelSize(20, 20), selectedColor(*wxBLACK), actionPerformer(&parent->getActionPerformer()){
 
     imageCoordMatrix.Translate(imagePosition.x, imagePosition.y);
     imageCoordMatrix.Scale(pixelSize.x, pixelSize.y);
@@ -104,8 +107,9 @@ void Canvas::leftDownHandler(wxMouseEvent &event) {
     if(positionOnPicture.m_x < 0 || positionOnPicture.m_x >= image->GetWidth() || positionOnPicture.m_y < 0 || positionOnPicture.m_y >= image->GetHeight())
         return;
 
-    image->SetRGB(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetRed(), selectedColor.GetGreen(), selectedColor.GetBlue());
-    if(image->HasAlpha())
-        image->SetAlpha(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetAlpha());
+//    image->SetRGB(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetRed(), selectedColor.GetGreen(), selectedColor.GetBlue());
+//    if(image->HasAlpha())
+//        image->SetAlpha(positionOnPicture.m_x, positionOnPicture.m_y, selectedColor.GetAlpha());
+    actionPerformer->performAction(std::make_unique<DrawAction>(wxPoint(positionOnPicture.m_x, positionOnPicture.m_y), selectedColor));
     Refresh();
 }
