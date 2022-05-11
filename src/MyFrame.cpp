@@ -26,6 +26,7 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
             actionPerformer.undo();
             this->canvas->Refresh();
         }
+        event.Skip();
     });
 }
 

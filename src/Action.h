@@ -5,7 +5,7 @@ class MyFrame;
 
 class Action {
 public:
-    virtual void perform(MyFrame& editor) = 0;
+    virtual bool perform(MyFrame& editor) = 0;
     virtual void undo(MyFrame& editor) = 0;
 };
 

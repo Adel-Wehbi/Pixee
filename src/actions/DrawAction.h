@@ -14,7 +14,7 @@ class DrawAction : public Action {
     wxColour previousColor;
 public:
     DrawAction(const wxPoint& cell, const wxColour& color);
-    void perform(MyFrame& editor) override;
+    bool perform(MyFrame& editor) override;
     void undo(MyFrame& editor) override;
 };
 
