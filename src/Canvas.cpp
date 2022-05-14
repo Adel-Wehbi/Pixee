@@ -50,13 +50,11 @@ void Canvas::render(wxDC &dc) {
     dc.ResetTransformMatrix();
     // drawing gridlines
     dc.SetPen(wxPen(*wxBLACK, 1));
-    int startingX = imagePosition.x - ceil(imagePosition.x / pixelSize.GetWidth()) * pixelSize.GetWidth();
-    int startingY = imagePosition.y - ceil(imagePosition.y / pixelSize.GetHeight()) * pixelSize.GetHeight();
-    for(int x = startingX; x < dc.GetSize().GetWidth(); x += pixelSize.GetWidth()) {
-        dc.DrawLine(wxPoint(x, 0), wxPoint(x, dc.GetSize().GetHeight()));
+    for(int x = imagePosition.x; x <= imagePosition.x + image->GetWidth() * pixelSize.x; x += pixelSize.x) {
+        dc.DrawLine(wxPoint(x, imagePosition.y), wxPoint(x, imagePosition.y + image->GetHeight() * pixelSize.y));
     }
-    for(int y = startingY; y < dc.GetSize().GetHeight(); y += pixelSize.GetHeight()) {
-        dc.DrawLine(wxPoint(0, y), wxPoint(dc.GetSize().GetWidth(), y));
+    for(int y = imagePosition.y; y <= imagePosition.y + image->GetHeight() * pixelSize.y; y += pixelSize.y) {
+        dc.DrawLine(wxPoint(imagePosition.x, y), wxPoint(imagePosition.x + image->GetWidth() * pixelSize.x, y));
     }
 }
 
